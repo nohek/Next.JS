@@ -3,38 +3,34 @@ import { api } from "../../services/api";
 import { getStripeJs } from "../../services/stripe-js";
 import styles from "./styles.module.scss";
 
-interface SubscribeButton {
+interface SubscribeButtonProps {
   priceId: string;
 }
 
-export function SubscribeButton({ priceId }: SubscribeButton) {
+export function SubscribeButton({ priceId }: SubscribeButtonProps) {
   const [session] = useSession();
 
   async function handleSubscribe() {
     if (!session) {
-      signIn('github')
+      signIn("github");
       return;
-    } 
+    }
 
     try {
-      const response = await api.post('/subscribe')
+      const response = await api.post("/subscribe");
 
-      const {sessionId } = response.data;
+      const { sessionId } = response.data;
 
-      const stripe = await getStripeJs()
+      const stripe = await getStripeJs();
 
-      await stripe.redirectToCheckout({sessionId})
+      await stripe.redirectToCheckout({ sessionId });
     } catch (err) {
       alert(err.message);
     }
   }
 
   return (
-    <button 
-    type="button" 
-    className={styles.subscribeButton}
-    onClick={handleSubscribe}
-    >
+    <button type="button" className={styles.subscribeButton} onClick={handleSubscribe}>
       Subscribe now
     </button>
   );
